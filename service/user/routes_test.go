@@ -3,6 +3,7 @@ package user
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -15,11 +16,11 @@ func TestUserServiceHandlers(t *testing.T) {
 	userStore := &mockUserStore{}
 	handler := NewHandler(userStore)
 
-	t.Run("should fail if the user ID is not a number", func(t *testing.T) {
+	t.Run("should fail if the user payload is invalid", func(t *testing.T) {
 		payload := types.RegisterUserPayload{
 			FirstName: "user",
 			LastName:  "123",
-			Email:     "",
+			Email:     "asd",
 			Password:  "asd",
 		}
 		marshalled, _ := json.Marshal(payload)
@@ -44,7 +45,7 @@ func TestUserServiceHandlers(t *testing.T) {
 type mockUserStore struct{}
 
 func (m *mockUserStore) GetUserByEmail(email string) (*types.User, error) {
-	return &types.User{}, nil
+	return nil, fmt.Errorf("user not found")
 }
 
 func (m *mockUserStore) CreateUser(u types.User) error {
