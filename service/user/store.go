@@ -72,6 +72,30 @@ func (s *Store) GetUserByID(id int) (*types.User, error) {
 	return u, nil
 }
 
+func (s *Store) GetAllUsers() ([]*types.User, error) {
+	rows, err := s.db.Query("SELECT * FROM users")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var users []*types.User
+	for rows.Next() {
+		user, err := scanRowsIntoUser(rows)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, user)
+	}
+
+	// Check if any error occurred during the iteration over rows
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}
+
 func scanRowsIntoUser(rows *sql.Rows) (*types.User, error) {
 	user := new(types.User)
 

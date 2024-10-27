@@ -15,6 +15,7 @@ type UserStore interface {
 	GetUserByEmail(email string) (*User, error)
 	GetUserByID(id int) (*User, error)
 	CreateUser(User) error
+	GetAllUsers() ([]*User, error)
 }
 
 type RegisterUserPayload struct {

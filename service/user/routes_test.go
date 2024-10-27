@@ -80,3 +80,7 @@ func (m *mockUserStore) CreateUser(u types.User) error {
 func (m *mockUserStore) GetUserByID(id int) (*types.User, error) {
 	return &types.User{}, nil
 }
+
+func (m *mockUserStore) GetAllUsers() ([]*types.User, error) {
+	return []*types.User{}, nil
+}
