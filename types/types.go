@@ -33,6 +33,7 @@ type LoginUserPayload struct {
 type ProductStore interface {
 	GetProducts() ([]*Product, error)
 	CreateProduct(Product) error
+	GetProductByID(id int) (*Product, error)
 }
 
 type Product struct {

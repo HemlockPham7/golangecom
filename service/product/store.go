@@ -33,6 +33,23 @@ func (s *Store) GetProducts() ([]*types.Product, error) {
 	return products, nil
 }
 
+func (s *Store) GetProductByID(productID int) (*types.Product, error) {
+	rows, err := s.db.Query("SELECT * FROM products WHERE id = ?", productID)
+	if err != nil {
+		return nil, err
+	}
+
+	p := new(types.Product)
+	for rows.Next() {
+		p, err = scanRowsIntoProduct(rows)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return p, nil
+}
+
 func (s *Store) CreateProduct(product types.Product) error {
 	_, err := s.db.Exec(
 		"INSERT INTO products (name, price, image, description, quantity) VALUES (?, ?, ?, ?, ?)",

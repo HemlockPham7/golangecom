@@ -3,6 +3,7 @@ package product
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/HemlockPham7/golangecom/types"
 	"github.com/HemlockPham7/golangecom/utils"
@@ -22,6 +23,8 @@ func NewHandler(store types.ProductStore) *Handler {
 
 func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/products", h.handleGetProducts).Methods(http.MethodGet)
+	router.HandleFunc("/products/{productID}", h.handleGetProduct).Methods(http.MethodGet)
+
 	router.HandleFunc("/products", h.handleCreateProduct).Methods(http.MethodPost)
 }
 
@@ -33,6 +36,29 @@ func (h *Handler) handleGetProducts(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.WriteJSON(w, http.StatusOK, products)
+}
+
+func (h *Handler) handleGetProduct(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	str, ok := vars["productID"]
+	if !ok {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("missing product ID"))
+		return
+	}
+
+	productID, err := strconv.Atoi(str)
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid product ID"))
+		return
+	}
+
+	product, err := h.store.GetProductByID(productID)
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, product)
 }
 
 func (h *Handler) handleCreateProduct(w http.ResponseWriter, r *http.Request) {
