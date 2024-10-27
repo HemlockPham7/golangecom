@@ -16,7 +16,7 @@ func TestUserServiceHandlers(t *testing.T) {
 	userStore := &mockUserStore{}
 	handler := NewHandler(userStore)
 
-	t.Run("should fail if the user payload is invalid", func(t *testing.T) {
+	t.Run("should fail if the user payload is", func(t *testing.T) {
 		payload := types.RegisterUserPayload{
 			FirstName: "user",
 			LastName:  "123",
